@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Кофейный журнал</title>
+<meta name="description" content="Дневник кофе и варок: зёрна, рецепты, оценки, оборудование, экспорт. Работает офлайн.">
+<meta name="theme-color" content="#fbf7f1">
+<meta name="color-scheme" content="light dark">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Coffee Journal">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="stylesheet" href="styles.css">
+<!-- Motion (motion.dev), pinned. If it fails to load, the app falls back to the Web Animations API. -->
+<script src="https://cdn.jsdelivr.net/npm/motion@11.18.2/dist/motion.js" defer></script>
+<script type="module" src="js/app.js"></script>
+</head>
+<body>
+<a class="skip" href="#view">Перейти к содержимому</a>
+<div id="app">
+  <main id="view" tabindex="-1"></main>
+  <nav class="tabbar" id="tabbar" aria-label="Основная навигация"></nav>
+</div>
+<div id="sheetRoot"></div>
+<div id="toasts" aria-live="polite"></div>
+<div id="printRoot" aria-hidden="true"></div>
+<input type="file" id="importFile" accept="application/json,.json" hidden>
+</body>
+</html>
