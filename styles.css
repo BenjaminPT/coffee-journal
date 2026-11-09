@@ -361,10 +361,10 @@ input[type="datetime-local"].input, input[type="date"].input { min-width: 0; }
 }
 
 /* ───────── Brew scene (kettle → V60 → server) ───────── */
-.bs { width: 100%; height: auto; overflow: visible; color: var(--ink); --bs-t: 4s; }
-.bs .bs-kettle { transform-box: view-box; transform-origin: 124px 47px; }
+.bs { width: 100%; height: auto; overflow: visible; color: var(--ink); --bs-t: 4s; --bs-paper: var(--bg); }
+.bs .bs-kettle { transform-box: view-box; transform-origin: 154px 98px; }
 .bs .bs-stream { stroke-dasharray: 1 1; stroke-dashoffset: 1; }
-.bs .bs-bed { transform-box: view-box; transform-origin: 120px 142px; }
+.bs .bs-bed { transform-box: view-box; transform-origin: 70px 164px; }
 .bs .bs-drops, .bs .bs-steam { opacity: 0; }
 .bs .bs-liquid { transform: translateY(0); }
 .bs.play .bs-kettle { animation: bs-kettle var(--bs-t) cubic-bezier(.45, 0, .25, 1) infinite; }
@@ -374,17 +374,20 @@ input[type="datetime-local"].input, input[type="date"].input { min-width: 0; }
 .bs.play .bs-drops { animation: bs-drops var(--bs-t) linear infinite; }
 .bs.play .bs-steam { animation: bs-steam var(--bs-t) ease-out infinite; }
 .bs .bs-drop { transform-box: view-box; }
+.bs .bs-dread { transform-box: view-box; }
+.bs.play .bs-dread { animation: bs-sway 3.2s ease-in-out infinite alternate; }
+@keyframes bs-sway { from { transform: rotate(-3.5deg); } to { transform: rotate(3.5deg); } }
 .bs.play .bs-drop { animation: bs-drop .72s cubic-bezier(.5, 0, 1, .6) infinite; }
 .bs.play .bs-drop.d2 { animation-delay: .24s; }
 .bs.play .bs-drop.d3 { animation-delay: .48s; }
 @keyframes bs-kettle {
-  0% { transform: translate(-44px, 8px) rotate(0); opacity: 0; }
+  0% { transform: translate(46px, 8px) rotate(0); opacity: 0; }
   13% { transform: translate(0, 0) rotate(0); opacity: 1; }
   21% { transform: translate(0, 0) rotate(0); }
-  31% { transform: translate(0, 0) rotate(17deg); }
-  76% { transform: translate(0, 0) rotate(17deg); }
+  31% { transform: translate(0, 0) rotate(-10deg); }
+  76% { transform: translate(0, 0) rotate(-10deg); }
   86% { transform: translate(0, 0) rotate(0); opacity: 1; }
-  95%, 100% { transform: translate(-44px, 8px) rotate(0); opacity: 0; }
+  95%, 100% { transform: translate(46px, 8px) rotate(0); opacity: 0; }
 }
 @keyframes bs-stream {
   0%, 29% { stroke-dashoffset: 1; }
@@ -399,11 +402,11 @@ input[type="datetime-local"].input, input[type="date"].input { min-width: 0; }
   84%, 100% { transform: scaleY(.8); }
 }
 @keyframes bs-fill {
-  0%, 38% { transform: translateY(56px); }
+  0%, 38% { transform: translateY(40px); }
   90%, 100% { transform: translateY(0); }
 }
 @keyframes bs-drops { 0%, 38% { opacity: 0; } 43%, 86% { opacity: 1; } 92%, 100% { opacity: 0; } }
-@keyframes bs-drop { 0% { transform: translateY(0); opacity: 1; } 85% { transform: translateY(32px); opacity: 1; } 100% { transform: translateY(36px); opacity: 0; } }
+@keyframes bs-drop { 0% { transform: translateY(0); opacity: 1; } 85% { transform: translateY(26px); opacity: 1; } 100% { transform: translateY(30px); opacity: 0; } }
 @keyframes bs-steam { 0%, 80% { opacity: 0; transform: translateY(6px); } 92% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(-6px); } }
 @media (prefers-reduced-motion: reduce) { .bs.play * { animation: none !important; } }
 
