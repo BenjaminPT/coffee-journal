@@ -1,6 +1,6 @@
 // key: [ru, en]
 const D = {
-  app: ['Кофейный журнал', 'Coffee Journal'],
+  app: ['Coffee Junior', 'Coffee Junior'],
   tab_brews: ['Журнал', 'Journal'], tab_coffees: ['Кофе', 'Beans'], tab_gear: ['Гаджеты', 'Gear'], tab_more: ['Ещё', 'More'],
   new_brew: ['Новая варка', 'New brew'], edit_brew: ['Редактировать варку', 'Edit brew'],
   brews_title: ['Журнал варок', 'Brew journal'], products_title: ['Мои кофе', 'My coffees'], gear_title: ['Гаджеты', 'Gear'], more_title: ['Ещё', 'More'],
@@ -79,7 +79,7 @@ Object.assign(D, {
   qr_scan_t: ['Сканер QR', 'QR scanner'], qr_scan_hint: ['Наведите камеру на QR-код рецепта или профиля', 'Point the camera at a recipe or profile QR code'],
   qr_cam_denied: ['Нет доступа к камере. Разрешите её в настройках браузера или отсканируйте код камерой телефона: ссылка откроет приложение.', 'No camera access. Allow it in the browser settings, or scan with the phone camera: the link opens the app.'],
   qr_cam_none: ['Камера недоступна. Отсканируйте код камерой телефона: ссылка откроет приложение.', 'Camera unavailable. Scan with the phone camera: the link opens the app.'],
-  qr_bad: ['Это не QR из «Кофейного журнала»', 'This is not a Coffee Journal QR'], qr_too_long: ['Рецепт слишком длинный для QR. Сократите заметки.', 'Recipe is too long for a QR. Shorten the notes.'],
+  qr_bad: ['Это не QR из «Coffee Junior»', 'This is not a Coffee Junior QR'], qr_too_long: ['Рецепт слишком длинный для QR. Сократите заметки.', 'Recipe is too long for a QR. Shorten the notes.'],
   qr_gallery: ['Выбрать фото с QR', 'Pick a photo with QR'], qr_no_code: ['На фото не нашлось QR-кода', 'No QR code found in the photo'],
   qr_copy: ['Скопировать ссылку', 'Copy link'], qr_share: ['Поделиться', 'Share'], link_copied: ['Ссылка скопирована', 'Link copied'],
   qr_loaded: ['Рецепт загружен: проверьте и сохраните', 'Recipe loaded: review and save'],

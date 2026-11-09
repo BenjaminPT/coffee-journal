@@ -34,7 +34,7 @@ jobs:
       - name: Create Capacitor Android project
         run: |
           npm i @capacitor/core@6 @capacitor/cli@6 @capacitor/android@6 --no-audit --no-fund
-          npx cap init "Кофейный журнал" com.cafejournal.app --web-dir www
+          npx cap init "Coffee Junior" com.cafejournal.app --web-dir www
           npx cap add android
 
       - name: App icon
