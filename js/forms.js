@@ -1,10 +1,11 @@
 import { $, $$, esc, uid, num, fmt, round, mmss, toLocalInput } from './util.js';
 import { ic, starPath } from './icons.js';
-import { t, METHODS, ROASTS, PROCESSES, FLAVORS, EQ_TYPES, COUNTRIES } from './i18n.js';
-import { state, get, upsert, productName, brewTitle, ratio } from './store.js';
+import { t, METHODS, ROASTS, PROCESSES, FLAVORS, EQ_TYPES, COUNTRIES, EQUIP_CATALOG } from './i18n.js';
+import { state, get, upsert, commit, profile, productName, brewTitle, ratio } from './store.js';
 import { openSheet, toast } from './ui.js';
 import { anim, pop } from './motion.js';
 import { fmtDate } from './views.js';
+import { openQR, openScanner, recipeUrl } from './share.js';
 
 const field = (label, inner, id, hint = '') => `<div class="field"><label for="${id}">${esc(label)}</label>${inner}${hint ? `<span class="hint">${esc(hint)}</span>` : ''}</div>`;
 const input = (id, name, val = '', extra = '') => `<input class="input" id="${id}" name="${name}" value="${esc(val ?? '')}" ${extra}>`;
@@ -142,6 +143,7 @@ export function brewForm({ id, productId, preset } = {}) {
   const min = b.time ? Math.floor(b.time / 60) : ''; const sec = b.time ? b.time % 60 : '';
 
   const html = `<form novalidate id="bf">
+    <div class="qr-row"><button type="button" class="btn secondary" data-qr-scan>${ic('qr', 20)}${esc(t('qr_scan'))}</button><button type="button" class="btn secondary" data-qr-make>${ic('qr', 20)}${esc(t('qr_create'))}</button></div>
     ${field(t('f_product'), `<select class="input" id="b_prod" name="productId"><option value="">${esc(t('f_no_product'))}</option>${state.products.map((p) => `<option value="${p.id}" ${b.productId === p.id ? 'selected' : ''}>${esc(productName(p))}${p.roastery ? ' — ' + esc(p.roastery) : ''}</option>`).join('')}</select>`, 'b_prod')}
     ${field(t('f_method'), `<select class="input" id="b_method" name="method">${methodOpts}</select>`, 'b_method')}
     ${field(t('f_date'), `<input class="input" type="datetime-local" id="b_date" name="date" value="${toLocalInput(b.date)}">`, 'b_date')}
@@ -198,15 +200,14 @@ export function brewForm({ id, productId, preset } = {}) {
       [mi, se].forEach((el) => el.addEventListener('input', () => { if (!running) draw(readFields()); }));
       draw(b.time || 0);
 
-      form.addEventListener('submit', (e) => {
-        e.preventDefault();
+      const collect = () => {
         const fd = new FormData(form);
         const p = fd.get('productId') ? get('product', fd.get('productId')) : null;
         const tmp = num(fd.get('temp'));
         const time = (num(fd.get('min')) || 0) * 60 + (num(fd.get('sec')) || 0);
         const d = fd.get('date');
         const o = {
-          ...(existing || {}), id: existing?.id || uid(),
+          ...(existing || {}), id: existing?.id || uid(), kind: existing?.kind || 'brew',
           productId: p?.id || '', productName: p ? productName(p) : existing?.productName || '',
           method: fd.get('method'), date: d ? new Date(d).toISOString() : new Date().toISOString(),
           dose: num(fd.get('dose')), water: num(fd.get('water')),
@@ -216,11 +217,59 @@ export function brewForm({ id, productId, preset } = {}) {
           rating: +fd.get('rating') || 0, cupping: num(fd.get('cupping')), tds: num(fd.get('tds')),
           flavors: fd.getAll('flavors'), notes: fd.get('notes').toString().trim(), favorite: fd.get('favorite') === 'on',
         };
-        if (saveOrWarn('brew', o)) api.close(o.id);
-      });
+        return o;
+      };
+      form.addEventListener('submit', (e) => { e.preventDefault(); const o = collect(); if (saveOrWarn('brew', o)) api.close(o.id); });
+
+      // QR: share the recipe being edited, or fill the form from a scanned one
+      const setVal = (name, v) => { const el = form.elements[name]; if (el) el.value = v == null ? '' : v; };
+      const applyRecipe = (r) => {
+        if (r.m) {
+          const sel = form.elements.method;
+          if (![...sel.options].some((o) => o.value === r.m)) sel.add(new Option(r.m, r.m), 0);
+          sel.value = r.m;
+        }
+        setVal('dose', r.d != null ? fmt(r.d) : ''); setVal('water', r.w != null ? fmt(r.w) : '');
+        if (r.d > 0 && r.w > 0) set(rat, r.w / r.d);
+        setVal('temp', r.t != null ? (F ? round((r.t * 9) / 5 + 32, 0) : r.t) : '');
+        setVal('grind', r.g || '');
+        mi.value = r.s ? Math.floor(r.s / 60) || '' : ''; se.value = r.s ? r.s % 60 : ''; draw(r.s || 0);
+        $$('input[name=flavors]', form).forEach((c) => { c.checked = (r.f || []).includes(c.value); });
+        const prod = r.c?.n ? state.products.find((x) => (x.name || '').toLowerCase() === r.c.n.toLowerCase()) : null;
+        if (prod) setVal('productId', prod.id);
+        toast(t('qr_loaded'));
+      };
+      $('[data-qr-make]', form).addEventListener('click', () => openQR({ title: t('qr_recipe_t'), url: recipeUrl(collect()), hint: t('qr_recipe_hint') }));
+      $('[data-qr-scan]', form).addEventListener('click', () => openScanner({ onRecipe: applyRecipe }));
     },
   });
 }
+
+/* ───────── Catalog picker (tap one item from a list, with search) ───────── */
+function bindPicker({ input, list, countEl, getItems, onPick, selected = '' }) {
+  let sel = selected;
+  const render = () => {
+    const all = getItems();
+    const q = input.value.trim().toLowerCase();
+    const items = all.filter((n) => !q || n.toLowerCase().includes(q));
+    list.innerHTML = items.length
+      ? items.map((n) => `<button type="button" class="pick-item" role="option" data-name="${esc(n)}" aria-selected="${n === sel}"><span>${esc(n)}</span>${ic('check', 18)}</button>`).join('')
+      : `<div class="pick-empty">${esc(t('cat_none'))}</div>`;
+    countEl.textContent = t('cat_count', { n: all.length });
+  };
+  list.addEventListener('click', (e) => {
+    const b = e.target.closest('.pick-item');
+    if (!b) return;
+    sel = b.dataset.name;
+    render();
+    onPick(sel);
+  });
+  input.addEventListener('input', render);
+  render();
+  return { render, setSelected: (v) => { sel = v; render(); } };
+}
+const pickerHtml = (id, label) => `<div class="field"><label for="${id}Q">${esc(label)}</label><div class="picker"><input class="input" type="search" id="${id}Q" placeholder="${esc(t('cat_search'))}" autocomplete="off" enterkeyhint="search">
+  <div class="pick-list" id="${id}L" role="listbox" aria-label="${esc(label)}"></div><span class="hint" id="${id}N"></span></div></div>`;
 
 /* ───────── Equipment / methods ───────── */
 export function equipForm(id) {
@@ -229,18 +278,29 @@ export function equipForm(id) {
     title: id ? t('eq_edit') : t('eq_new'), strict: true,
     html: `<form novalidate id="ef">
       ${field(t('eq_type'), `<select class="input" id="e_type" name="type">${EQ_TYPES.map((x) => `<option value="${x}" ${e.type === x ? 'selected' : ''}>${esc(t('eq_t_' + x))}</option>`).join('')}</select>`, 'e_type')}
-      ${field(t('eq_name'), input('e_name', 'name', e.name, 'required autocomplete="off"') + '<span class="err" id="e_err" role="alert" hidden></span>', 'e_name')}
-      ${field(t('eq_notes'), `<textarea class="input" id="e_notes" name="notes" rows="3">${esc(e.notes || '')}</textarea>`, 'e_notes')}
+      ${id ? '' : pickerHtml('cat', t('cat_pick'))}
+      ${field(id ? t('eq_name') : t('cat_or'), input('e_name', 'name', e.name, 'required autocomplete="off"') + '<span class="err" id="e_err" role="alert" hidden></span>', 'e_name')}
+      ${field(t('eq_notes'), `<textarea class="input" id="e_notes" name="notes" rows="2">${esc(e.notes || '')}</textarea>`, 'e_notes')}
       ${id ? `<button type="button" class="btn danger" data-del>${ic('trash', 20)}${esc(t('delete'))}</button>` : ''}
       ${foot()}</form>`,
     onMount(api) {
       const form = $('#ef', api.body);
       $('[data-del]', form)?.addEventListener('click', () => { api.close('delete'); });
+      const nameEl = $('#e_name', form), typeEl = $('#e_type', form);
+      if (!id) {
+        const pk = bindPicker({
+          input: $('#catQ', form), list: $('#catL', form), countEl: $('#catN', form),
+          getItems: () => EQUIP_CATALOG.filter((x) => x.type === typeEl.value).map((x) => x.name),
+          onPick: (n) => { nameEl.value = n; $('#e_err', form).hidden = true; },
+        });
+        typeEl.addEventListener('change', () => pk.setSelected(''));
+        nameEl.addEventListener('input', () => pk.setSelected(''));
+      }
       form.addEventListener('submit', (ev) => {
         ev.preventDefault();
         const fd = new FormData(form);
         const name = fd.get('name').toString().trim();
-        if (!name) { const er = $('#e_err', form); er.textContent = t('name_required'); er.hidden = false; $('#e_name', form).focus(); return; }
+        if (!name) { const er = $('#e_err', form); er.textContent = t('name_required'); er.hidden = false; nameEl.focus(); return; }
         if (saveOrWarn('equip', { ...e, id: e.id || uid(), type: fd.get('type'), name, notes: fd.get('notes').toString().trim() })) api.close('saved');
       });
     },
@@ -251,13 +311,35 @@ export function equipForm(id) {
 export function methodForm() {
   openSheet({
     title: t('method_add'), strict: true,
-    html: `<form novalidate id="mf">${field(t('method_name'), input('m_name', 'name', '', 'required autocomplete="off"'), 'm_name')}${foot()}</form>`,
+    html: `<form novalidate id="mf">${pickerHtml('met', t('method_pick'))}${field(t('cat_or'), input('m_name', 'name', '', 'autocomplete="off"') + '<span class="err" id="m_err" role="alert" hidden></span>', 'm_name')}${foot()}</form>`,
     onMount(api) {
-      $('#mf', api.body).addEventListener('submit', (ev) => {
+      const form = $('#mf', api.body);
+      const nameEl = $('#m_name', form);
+      const pk = bindPicker({ input: $('#metQ', form), list: $('#metL', form), countEl: $('#metN', form), getItems: () => METHODS, onPick: (n) => { nameEl.value = n; $('#m_err', form).hidden = true; } });
+      nameEl.addEventListener('input', () => pk.setSelected(''));
+      form.addEventListener('submit', (ev) => {
         ev.preventDefault();
-        const name = new FormData(ev.target).get('name').toString().trim();
-        if (!name) return $('#m_name', api.body).focus();
+        const name = nameEl.value.trim();
+        if (!name) { const er = $('#m_err', form); er.textContent = t('name_required'); er.hidden = false; nameEl.focus(); return; }
+        if (state.methods.some((m) => m.name.toLowerCase() === name.toLowerCase())) { api.close(); return; }
         if (saveOrWarn('method', { id: uid(), name })) api.close();
+      });
+    },
+  });
+}
+
+export function profileForm() {
+  const pr = profile();
+  openSheet({
+    title: t('prof_title'), strict: true,
+    html: `<form novalidate id="prf">${field(t('prof_name'), input('pr_name', 'name', pr.name, `maxlength="24" placeholder="${esc(t('prof_name_ph'))}" autocomplete="nickname"`), 'pr_name', t('prof_note'))}${foot()}</form>`,
+    onMount(api) {
+      $('#prf', api.body).addEventListener('submit', (ev) => {
+        ev.preventDefault();
+        pr.name = new FormData(ev.target).get('name').toString().trim();
+        commit();
+        toast(t('saved'));
+        api.close();
       });
     },
   });

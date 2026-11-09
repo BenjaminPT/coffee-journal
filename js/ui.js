@@ -44,6 +44,13 @@ export function openSheet({ title, html, onMount, onClose, strict = false }) {
   $('#sheetRoot').appendChild(wrap);
   document.body.classList.add('lock');
   const sheet = $('.sheet', wrap);
+  // keep the action bar outside the scrolling body so it never covers a field
+  const foot = $('.sheet-foot', wrap);
+  if (foot) {
+    const form = foot.closest('form');
+    if (form?.id) $$('button[type=submit]', foot).forEach((b) => b.setAttribute('form', form.id));
+    sheet.appendChild(foot);
+  }
   const backdrop = $('.backdrop', wrap);
   let closed = false;
 

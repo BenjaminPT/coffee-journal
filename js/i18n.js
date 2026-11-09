@@ -67,6 +67,45 @@ const D = {
   h_grind: ['Помол', 'Grind'], h_time: ['Время', 'Time'], h_rating: ['Оценка', 'Rating'], h_notes: ['Заметки', 'Notes'], h_flavors: ['Вкус', 'Flavors'],
 };
 
+
+Object.assign(D, {
+  theme_black: ['Чёрная', 'Black'],
+  prof_title: ['Профиль', 'Profile'], prof_name: ['Ваше имя', 'Your name'], prof_name_ph: ['Например, Алекс', 'e.g. Alex'], prof_default: ['Любитель кофе', 'Coffee lover'],
+  prof_qr: ['QR-профиль', 'Profile QR'], prof_note: ['QR содержит имя и статистику на момент создания. Друг увидит снимок, живой связи нет.', 'The QR holds your name and a stats snapshot taken now. Your friend sees a snapshot, there is no live link.'],
+  prof_snapshot: ['Снимок на {date}', 'Snapshot from {date}'], prof_of: ['Профиль: {name}', 'Profile: {name}'],
+  qr_scan: ['Сканировать', 'Scan QR'], qr_create: ['Создать QR', 'Create QR'], qr_recipe_t: ['QR рецепта', 'Recipe QR'],
+  qr_recipe_hint: ['Покажите код другу: он отсканирует его в приложении (кнопка «Сканировать») или камерой телефона и получит этот рецепт.', 'Show this code to a friend: they scan it in the app (Scan button) or with the phone camera and get this recipe.'],
+  qr_profile_hint: ['Отсканируйте в приложении или камерой телефона, чтобы увидеть профиль и статистику.', 'Scan in the app or with the phone camera to see the profile and stats.'],
+  qr_scan_t: ['Сканер QR', 'QR scanner'], qr_scan_hint: ['Наведите камеру на QR-код рецепта или профиля', 'Point the camera at a recipe or profile QR code'],
+  qr_cam_denied: ['Нет доступа к камере. Разрешите её в настройках браузера или отсканируйте код камерой телефона: ссылка откроет приложение.', 'No camera access. Allow it in the browser settings, or scan with the phone camera: the link opens the app.'],
+  qr_cam_none: ['Камера недоступна. Отсканируйте код камерой телефона: ссылка откроет приложение.', 'Camera unavailable. Scan with the phone camera: the link opens the app.'],
+  qr_bad: ['Это не QR из «Кофейного журнала»', 'This is not a Coffee Journal QR'], qr_too_long: ['Рецепт слишком длинный для QR. Сократите заметки.', 'Recipe is too long for a QR. Shorten the notes.'],
+  qr_gallery: ['Выбрать фото с QR', 'Pick a photo with QR'], qr_no_code: ['На фото не нашлось QR-кода', 'No QR code found in the photo'],
+  qr_copy: ['Скопировать ссылку', 'Copy link'], qr_share: ['Поделиться', 'Share'], link_copied: ['Ссылка скопирована', 'Link copied'],
+  qr_loaded: ['Рецепт загружен: проверьте и сохраните', 'Recipe loaded: review and save'],
+  imp_title: ['Рецепт от {name}', 'Recipe from {name}'], imp_save: ['Сохранить в рецепты', 'Save to recipes'], imp_brew: ['Сварить', 'Brew it'], imp_saved: ['Рецепт сохранён', 'Recipe saved'],
+  recipes: ['Рецепты', 'Recipes'], recipe: ['Рецепт', 'Recipe'], recipes_empty: ['Здесь будут рецепты, полученные по QR. В статистику они не попадают, пока вы их не сварите.', 'Recipes received via QR appear here. They are not counted in stats until you brew them.'],
+  st_note: ['В статистику попадают только варки, которые вы записали сами или сварили кнопкой «Сварить». Примеры и полученные рецепты не считаются.', 'Stats count only brews you logged yourself or made with the “Brew” button. Examples and received recipes are not counted.'],
+  demo_badge: ['пример', 'example'], demo_clear: ['Убрать примеры', 'Remove examples'], demo_cleared: ['Примеры удалены', 'Examples removed'],
+  cat_search: ['Поиск по каталогу', 'Search the catalog'], cat_pick: ['Выберите из каталога', 'Pick from the catalog'], cat_none: ['Ничего не найдено. Введите название вручную ниже.', 'Nothing found. Type a name below.'],
+  cat_count: ['В каталоге: {n}', 'In the catalog: {n}'], cat_or: ['Или своё название', 'Or a custom name'], cat_added: ['Добавлено: {name}', 'Added: {name}'],
+  method_pick: ['Выберите метод из списка', 'Pick a method from the list'], gear_empty_t: ['Пока пусто', 'Nothing here yet'],
+  qr_tab_hint: ['Рецепт из QR', 'Recipe from QR'], from_user: ['От: {name}', 'From: {name}'], brew_recipe: ['Сварить по рецепту', 'Brew this recipe'],
+  settings_profile: ['Профиль', 'Profile'], splash_sub: ['Заваривайте осознанно', 'Brew with intent'], splash_skip: ['Нажмите, чтобы пропустить', 'Tap to skip'],
+});
+
+export const EQUIP_CATALOG = [
+  ...['Hario V60-01', 'Hario V60-02', 'Hario V60 Switch', 'Hario Mugen', 'Chemex Classic 3 Cup', 'Chemex Classic 6 Cup', 'Chemex 8 Cup', 'Kalita Wave 155', 'Kalita Wave 185', 'AeroPress Original', 'AeroPress Go', 'AeroPress Clear',
+    'Clever Dripper', 'French Press Bodum Chambord', 'Origami Dripper', 'April Brewer', 'Orea V3', 'Fellow Stagg [X]', 'Timemore B75', 'Melitta 1x4', 'Bialetti Moka Express', 'Moka Pot Alessi', 'Moccamaster KBG', 'Technivorm Moccamaster', 'Gaggia Classic Pro',
+    'Breville Barista Express', 'De’Longhi Dedica', 'Rancilio Silvia', 'Flair 58', 'Flair Classic', 'Hario Syphon Technica', 'Cezve / Ibrik', 'Vietnamese Phin', 'Espro Bloom', 'Cold Brew Mizudashi'].map((name) => ({ type: 'brewer', name })),
+  ...['Comandante C40 MK4', '1Zpresso JX-Pro', '1Zpresso K-Ultra', '1Zpresso Q2', '1Zpresso J-Max', 'Timemore Chestnut C2', 'Timemore Chestnut C3', 'Timemore Chestnut S3', 'Fellow Ode Gen 2', 'Fellow Opus', 'Baratza Encore', 'Baratza Virtuoso+', 'Baratza Sette 270',
+    'Baratza Vario', 'Eureka Mignon Specialita', 'Niche Zero', 'DF64 Gen 2', 'Lagom P64', 'Kinu M47', 'Weber EG-1', 'Hario Skerton Pro', 'Hario Mini Mill', 'Wilfa Svart Aroma', 'Option-O Lagom Mini', 'Mahlkönig EK43', 'Rocket Faustino', 'DF83', 'Hario Coffee Mill Slim'].map((name) => ({ type: 'grinder', name })),
+  ...['Fellow Stagg EKG', 'Fellow Stagg Pour-Over Kettle', 'Brewista Artisan', 'Bonavita Gooseneck', 'Hario Buono Kettle', 'Timemore Fish', 'Bodum Melior', 'Cuisinart PerfecTemp', 'Hario Drip Kettle Air'].map((name) => ({ type: 'kettle', name })),
+  ...['Acaia Pearl', 'Acaia Lunar', 'Timemore Black Mirror Basic', 'Timemore Black Mirror Nano', 'Hario V60 Drip Scale', 'Felicita Arc', 'Brewista Smart Scale II', 'Fellow Tally'].map((name) => ({ type: 'scale', name })),
+  ...['Hario V60 paper (white)', 'Hario V60 paper (bleached)', 'Chemex bonded filters', 'Kalita Wave paper', 'AeroPress paper', 'Cafec Abaca', 'Able Kone (metal)', 'Cloth filter (Woodneck)'].map((name) => ({ type: 'filter', name })),
+  ...['Third Wave Water Classic', 'Third Wave Water Light', 'Barista Hustle Water Recipe', 'Lotus Water Drops', 'Bottled water (low minerals)', 'Filtered tap water'].map((name) => ({ type: 'water', name })),
+];
+
 export const METHODS = [
   'Espresso', 'Ristretto', 'Lungo', 'Moka Pot', 'AeroPress', 'AeroPress (inverted)', 'AeroPress Go', 'French Press', 'Hario V60', 'Chemex', 'Kalita Wave', 'Clever Dripper',
   'Origami Dripper', 'Melitta', 'Bee House', 'April Brewer', 'Orea', 'Flat-bottom dripper', 'Wilfa Svart', 'Moccamaster', 'Batch brew', 'Siphon', 'Cold brew', 'Cold drip',

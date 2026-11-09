@@ -7,7 +7,7 @@ export const state = {
   brews: [],
   equipment: [],
   methods: [],
-  settings: { theme: 'auto', lang: null, tempUnit: 'C' },
+  settings: { theme: 'auto', lang: null, tempUnit: 'C', profile: { id: '', name: '' } },
 };
 
 const subs = new Set();
@@ -23,6 +23,7 @@ export function load() {
     state.equipment = d.equipment || [];
     state.methods = d.methods || [];
     state.settings = { ...state.settings, ...(d.settings || {}) };
+    state.settings.profile = { id: '', name: '', ...(state.settings.profile || {}) };
   } catch (e) {
     console.warn('load failed', e);
   }
@@ -67,6 +68,28 @@ export function remove(kind, id) {
 export function restore(kind, rec) {
   state[coll[kind]].splice(rec.index, 0, rec.item);
   commit();
+}
+
+/** A brew counts towards statistics only if the user logged it (or brewed it via the "Brew" button):
+ *  example data and recipes received by QR are excluded; merely opening or tapping a card never creates a brew. */
+export const countable = (b) => !b.demo && b.kind !== 'recipe';
+export const isRecipe = (b) => b.kind === 'recipe';
+
+export function profile() {
+  const p = state.settings.profile;
+  if (!p.id) { p.id = uid(); commit(true); }
+  return p;
+}
+
+export function clearDemo() {
+  let n = 0;
+  for (const k of ['products', 'brews', 'equipment']) {
+    const before = state[k].length;
+    state[k] = state[k].filter((x) => !x.demo);
+    n += before - state[k].length;
+  }
+  commit();
+  return n;
 }
 
 export const productName = (p) => (p ? p.name || p.roastery || '—' : '');
@@ -127,7 +150,7 @@ export function loadDemo(lang) {
   const g2 = { id: uid(), type: 'brewer', name: 'Hario V60-02 (ceramic)', notes: '' };
   const g3 = { id: uid(), type: 'filter', name: 'Hario V60 paper, white', notes: '' };
   const g4 = { id: uid(), type: 'water', name: 'Third Wave Water, Classic', notes: '' };
-  const b = (o) => ({ id: uid(), favorite: false, flavors: [], notes: '', tds: null, cupping: null, grinder: g1.id, brewer: '', filter: '', waterRecipe: '', ...o });
+  const b = (o) => ({ id: uid(), kind: 'brew', favorite: false, flavors: [], notes: '', tds: null, cupping: null, grinder: g1.id, brewer: '', filter: '', waterRecipe: '', ...o });
   const brews = [
     b({ productId: p1.id, productName: p1.name, method: 'Hario V60', date: iso(0, 7, 55), dose: 15, water: 250, temp: 94, grind: ru ? '24 клика' : '24 clicks', time: 175, rating: 5, favorite: true, flavors: ['floral', 'citrus', 'tea'], notes: ru ? 'Идеальный баланс. 4:6 метод, 5 вливаний.' : 'Perfect balance. 4:6 method, 5 pours.', brewer: g2.id, filter: g3.id, waterRecipe: g4.id, tds: 1.38, cupping: 87 }),
     b({ productId: p2.id, productName: p2.name, method: 'AeroPress', date: iso(1, 9, 10), dose: 17, water: 230, temp: 88, grind: ru ? '18 кликов' : '18 clicks', time: 130, rating: 4, flavors: ['chocolate', 'caramel'], notes: ru ? 'Инверт, 30 с настаивание. Плотно и сладко.' : 'Inverted, 30 s steep. Dense and sweet.' }),
@@ -136,6 +159,7 @@ export function loadDemo(lang) {
     b({ productId: p2.id, productName: p2.name, method: 'French Press', date: iso(6, 10, 0), dose: 30, water: 500, temp: 96, grind: ru ? '30 кликов' : '30 clicks', time: 240, rating: 4, flavors: ['berry', 'sweet'] }),
     b({ productId: p1.id, productName: p1.name, method: 'Kalita Wave', date: iso(9, 8, 5), dose: 16, water: 260, temp: 93, grind: ru ? '23 клика' : '23 clicks', time: 190, rating: 5, favorite: true, flavors: ['citrus', 'floral', 'balanced'] }),
   ];
+  [p1, p2, p3, g1, g2, g3, g4, ...brews].forEach((o) => { o.demo = true; });
   state.products.unshift(p1, p2, p3);
   state.equipment.unshift(g1, g2, g3, g4);
   state.brews.unshift(...brews);

@@ -1,8 +1,8 @@
 // Offline-first service worker. Bump VERSION to force an update.
-const VERSION = 'v1';
+const VERSION = 'v2';
 const CACHE = `cafe-journal-${VERSION}`;
 const SHELL = ['./', 'index.html', 'styles.css', 'manifest.webmanifest', 'icons/icon.svg', 'icons/icon-192.png', 'icons/icon-512.png',
-  'js/app.js', 'js/util.js', 'js/i18n.js', 'js/icons.js', 'js/motion.js', 'js/store.js', 'js/ui.js', 'js/views.js', 'js/forms.js', 'js/export.js'];
+  'js/app.js', 'js/util.js', 'js/i18n.js', 'js/icons.js', 'js/motion.js', 'js/store.js', 'js/ui.js', 'js/views.js', 'js/forms.js', 'js/export.js', 'js/qr.js', 'js/share.js', 'js/brewscene.js'];
 
 self.addEventListener('install', (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(SHELL)).then(() => self.skipWaiting()));

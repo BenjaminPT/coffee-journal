@@ -1,11 +1,13 @@
-import { $, $$, debounce, uid } from './util.js';
+import { $, $$, debounce, uid, esc } from './util.js';
 import { ic } from './icons.js';
 import { t, setLang, getLang, detectLang } from './i18n.js';
-import { state, load, subscribe, commit, get, remove, restore, upsert, resetAll, importData, loadDemo, brewTitle } from './store.js';
+import { state, load, subscribe, commit, get, remove, restore, upsert, resetAll, importData, loadDemo, brewTitle, clearDemo } from './store.js';
 import { anim, enter, RM } from './motion.js';
 import { toast, confirmSheet, sheetDepth } from './ui.js';
 import { ui, viewBrews, viewProducts, viewProduct, viewBrew, viewGear, viewMore, brewListHtml, productListHtml } from './views.js';
-import { productForm, brewForm, equipForm, methodForm, compareSheet } from './forms.js';
+import { productForm, brewForm, equipForm, methodForm, compareSheet, profileForm } from './forms.js';
+import { openQR, openScanner, recipeUrl, profileUrl, parseShared, deliver, presetFromRecipe } from './share.js';
+import { brewScene } from './brewscene.js';
 import { exportJSON, exportCSV, printJournal } from './export.js';
 
 load();
@@ -24,7 +26,7 @@ function applyTheme() {
   if (th === 'auto') document.documentElement.removeAttribute('data-theme');
   else document.documentElement.dataset.theme = th;
   const dark = th === 'dark' || (th === 'auto' && matchMedia('(prefers-color-scheme: dark)').matches);
-  $('meta[name=theme-color]')?.setAttribute('content', dark ? '#17110d' : '#fbf7f1');
+  $('meta[name=theme-color]')?.setAttribute('content', th === 'black' ? '#000000' : dark ? '#17110d' : '#fbf7f1');
 }
 
 function parse() {
@@ -38,28 +40,10 @@ const tabOf = (r) => (r.name === 'product' ? 'products' : r.name === 'brew' ? 'b
 function buildTabbar() {
   const tab = (k, icon, label) => `<button type="button" class="tab" data-tab="${k}" ${tabOf(route) === k ? 'aria-current="page"' : ''}>${ic(icon, 24)}<span>${esc(label)}</span></button>`;
   const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-  $('#tabbar').innerHTML = `<span class="tab-pill" id="pill" aria-hidden="true"></span>
-    ${tab('brews', 'journal', t('tab_brews'))}${tab('products', 'bean', t('tab_coffees'))}
+  $('#tabbar').innerHTML = `${tab('brews', 'journal', t('tab_brews'))}${tab('products', 'bean', t('tab_coffees'))}
     <button type="button" class="fab" data-act="new-brew" aria-label="${esc(t('new_brew'))}">${ic('plus', 28)}</button>
     ${tab('gear', 'gear', t('tab_gear'))}${tab('more', 'more', t('tab_more'))}`;
-  movePill(false);
 }
-function movePill(animate = true) {
-  const pill = $('#pill');
-  const cur = $('.tab[aria-current="page"]');
-  if (!pill || !cur) return;
-  const bar = $('#tabbar');
-  const x = cur.offsetLeft;
-  const w = cur.offsetWidth;
-  pill.style.width = `${w - 8}px`;
-  const prev = pill._x ?? x;
-  pill._x = x;
-  if (animate && prev !== x) anim(pill, { x: [prev + 4, x + 4] }, { spring: true, stiffness: 420, damping: 32 });
-  pill.style.left = '0px';
-  pill.style.transform = `translateX(${x + 4}px)`;
-  void bar;
-}
-
 /* ───────── Rendering ───────── */
 function html() {
   switch (route.name) {
@@ -79,7 +63,6 @@ function render({ animate = true, dir = 0 } = {}) {
   view.innerHTML = out;
   watchSticky();
   $$('[data-tab]').forEach((b) => (b.dataset.tab === tabOf(route) ? b.setAttribute('aria-current', 'page') : b.removeAttribute('aria-current')));
-  movePill(animate);
   if (animate) {
     if (dir) anim(view, { opacity: [0, 1], x: [dir * 28, 0] }, { duration: 0.38 });
     else anim(view, { opacity: [0, 1], y: [8, 0] }, { duration: 0.3 });
@@ -96,7 +79,44 @@ function watchSticky() {
   new IntersectionObserver(([e]) => bar.classList.toggle('stuck', !e.isIntersecting)).observe(s);
 }
 
+/** A scanned/opened link like #/r/<data> (recipe) or #/u/<data> (profile): show it, then go back to the journal. */
+let splashing = false;
+const afterSplash = [];
+const whenReady = (fn) => (splashing ? afterSplash.push(fn) : fn());
+function checkShared() {
+  const o = parseShared(location.hash);
+  if (!o) return;
+  history.replaceState(null, '', location.pathname + location.search + '#/brews');
+  whenReady(() => setTimeout(() => deliver(o), 250));
+}
+
+function showSplash() {
+  let seen = false;
+  try { seen = sessionStorage.getItem('cj-splash') === '1'; sessionStorage.setItem('cj-splash', '1'); } catch { /* private mode */ }
+  if (seen || /#\/[ru]\//.test(location.hash)) return;
+  const el = document.createElement('div');
+  el.id = 'splash';
+  el.setAttribute('role', 'presentation');
+  el.innerHTML = `${brewScene({ cls: 'play' })}<h1>${esc(t('app'))}</h1><p>${esc(t('splash_sub'))}</p><span class="skip-hint">${esc(t('splash_skip'))}</span>`;
+  document.body.appendChild(el);
+  splashing = true;
+  anim($$('h1, p', el), { opacity: [0, 1], y: [12, 0] }, { delay: 0.5, stagger: 0.12, duration: 0.5 });
+  let done = false;
+  const end = async () => {
+    if (done) return;
+    done = true;
+    await Promise.race([anim(el, { opacity: [1, 0], scale: [1, 1.03] }, { duration: 0.35, ease: 'linear' }), new Promise((r) => setTimeout(r, 500))]);
+    el.remove();
+    splashing = false;
+    afterSplash.splice(0).forEach((f) => f());
+  };
+  el.addEventListener('click', end);
+  document.addEventListener('keydown', function k(e) { if (e.key === 'Escape' || e.key === 'Enter') { document.removeEventListener('keydown', k); end(); } });
+  setTimeout(end, RM.matches ? 900 : 3700);
+}
+
 function go() {
+  checkShared();
   navs++;
   scrollMem[currentKey] = window.scrollY;
   const next = parse();
@@ -166,6 +186,15 @@ const A = {
   'new-equip'() { equipForm(); },
   'edit-equip'(el) { equipForm(el.dataset.id); },
   'new-method'() { methodForm(); },
+  'scan-qr'() { openScanner(); },
+  'my-qr'() { openQR({ title: t('prof_qr'), url: profileUrl(), hint: t('qr_profile_hint') }); },
+  'edit-profile'() { profileForm(); },
+  'brew-qr'(el) { openQR({ title: t('qr_recipe_t'), url: recipeUrl(get('brew', el.dataset.id)), hint: t('qr_recipe_hint') }); },
+  'brew-recipe'(el) {
+    const b = get('brew', el.dataset.id);
+    brewForm({ preset: presetFromRecipe({ m: b.method, d: b.dose, w: b.water, t: b.temp, g: b.grind, f: b.flavors, c: b.coffee || (b.productName ? { n: b.productName } : null), e: b.gear }) });
+  },
+  'clear-demo'() { clearDemo(); toast(t('demo_cleared')); },
   'del-method'(el) { const rec = remove('method', el.dataset.id); toast(t('deleted'), { action: t('undo'), onAction: () => restore('method', rec) }); },
   filter(el) { ui.filter = el.dataset.f; refresh(); },
   'clear-q'() { ui.q = ''; refresh(); $('#q')?.focus(); },
@@ -216,11 +245,12 @@ $('#importFile').addEventListener('change', async (e) => {
 window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); installEvt = e; if (route.name === 'more') refresh(); });
 matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change', applyTheme);
 document.title = t('app');
+checkShared();
 route = parse();
 lastDepth = depth(route);
 buildTabbar();
 render();
-window.addEventListener('resize', () => movePill(false));
+showSplash();
 
 if ('serviceWorker' in navigator && location.protocol !== 'file:') {
   navigator.serviceWorker.register('sw.js').catch(() => {});
