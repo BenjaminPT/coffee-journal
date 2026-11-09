@@ -7,19 +7,23 @@ const CONE = 'M42 124H98L82 162H58Z';
 
 // dreadlocks: [path, pivot x, pivot y, animation delay]
 const BACK = [
-  ['M192 36Q210 40 212 66', 192, 36, 0],
-  ['M190 42Q204 52 204 80', 190, 42, -0.6],
-  ['M186 33Q206 28 218 50', 186, 33, -1.2],
-  ['M194 48Q196 62 194 84', 194, 48, -1.8],
-  ['M182 30Q196 20 212 32', 182, 30, -2.4],
+  ['M194 30Q212 36 214 68', 194, 30, 0],
+  ['M196 38Q208 54 208 90', 196, 38, -0.7],
+  ['M190 26Q210 22 222 46', 190, 26, -1.4],
+  ['M198 46Q200 66 198 98', 198, 46, -2.1],
+  ['M184 22Q200 12 216 26', 184, 22, -2.8],
 ];
 const FRONT = [
-  ['M156 38Q146 48 148 66', 156, 38, -0.3],
-  ['M160 33Q150 38 144 52', 160, 33, -1.5],
+  ['M192 34Q199 50 195 76', 192, 34, -0.4],
+  ['M187 29Q192 46 188 66', 187, 29, -1.6],
+  ['M160 24Q150 20 145 30', 160, 24, -2.2],
 ];
 
 const dread = ([d, x, y, delay], w) =>
-  `<path class="bs-dread" d="${d}" style="transform-origin:${x}px ${y}px;animation-delay:${delay}s" stroke="currentColor" stroke-width="${w}" stroke-linecap="round" fill="none"/>`;
+  `<g class="bs-dread" style="transform-origin:${x}px ${y}px;animation-delay:${delay}s"><path d="${d}" stroke="currentColor" stroke-width="${w}" fill="none"/><path d="${d}" stroke="var(--bs-paper)" stroke-opacity=".5" stroke-width="1.4" stroke-dasharray="1.2 4.6" fill="none"/></g>`;
+
+// limb drawn as an outlined tube
+const tube = (d, w = 11) => `<path d="${d}" stroke="currentColor" stroke-width="${w + 5}" fill="none"/><path d="${d}" stroke="var(--bs-paper)" stroke-width="${w - 1}" fill="none"/>`;
 
 export function brewScene({ cls = '', label = '' } = {}) {
   const id = ++n;
@@ -31,17 +35,27 @@ export function brewScene({ cls = '', label = '' } = {}) {
   <ellipse cx="72" cy="232" rx="46" ry="4" fill="currentColor" opacity=".1"/>
 
   <g class="bs-person" stroke="currentColor" stroke-width="3">
-    <g>${BACK.map((d) => dread(d, 6.5)).join('')}</g>
-    <path d="M162 76C148 92 142 140 144 220H234V150C234 110 216 84 192 72Z" fill="var(--bs-paper)"/>
-    <path d="M162 76C148 92 142 140 144 220H234V150C234 110 216 84 192 72Z" fill="var(--accent)" fill-opacity=".16" stroke="none"/>
-    <path d="M168 66V80M184 64V76" fill="none"/>
-    <path d="M168 96C186 90 206 82 216 94C230 110 226 138 204 142C190 144 176 130 166 110Z" fill="var(--bs-paper)"/>
-    <path d="M168 96C186 90 206 82 216 94C230 110 226 138 204 142C190 144 176 130 166 110Z" fill="var(--accent)" fill-opacity=".16" stroke="none"/>
-    <path d="M154 50C153 34 160 28 172 28C186 28 192 38 190 52C189 62 184 70 174 70C164 70 155 62 154 50Z" fill="var(--bs-paper)"/>
-    <circle cx="191" cy="54" r="4" fill="var(--bs-paper)"/>
-    <path d="M158 52Q163 56 168 52M160 58L157 66H162M164 68Q168 70 172 68" fill="none" stroke-width="2.4"/>
-    <path d="M153 50C150 28 168 20 184 26C198 31 197 46 192 54L187 44C177 38 164 41 157 52Z" fill="currentColor"/>
-    <g>${FRONT.map((d) => dread(d, 5.5)).join('')}</g>
+    <g class="bs-hair-back">${BACK.map((d) => dread(d, 6.5)).join('')}</g>
+    <path d="M168 70V86M186 68V84" fill="none"/>
+    <path d="M160 78H208L210 92H158Z" fill="var(--bs-paper)" stroke="none"/>
+    <!-- oversized tank top -->
+    <path d="M160 84C168 98 164 110 162 124C157 156 153 190 153 224H229C229 190 226 156 217 122C214 108 214 96 208 84C202 92 194 96 184 96C174 96 166 92 160 84Z" fill="var(--bs-paper)"/>
+    <path d="M160 84C168 98 164 110 162 124C157 156 153 190 153 224H229C229 190 226 156 217 122C214 108 214 96 208 84C202 92 194 96 184 96C174 96 166 92 160 84Z" fill="var(--accent)" fill-opacity=".18" stroke="none"/>
+    <path d="M158 214H224M174 142Q178 170 172 198" fill="none" stroke-width="2" stroke-opacity=".35"/>
+    <!-- far arm, relaxed (in front of the tank) -->
+    ${tube('M207 96C223 120 225 148 218 172', 10)}
+    <path d="M211 170Q210 182 218 184Q227 184 226 174Q225 166 218 166Z" fill="var(--bs-paper)"/>
+    <!-- near arm: upper part (static) -->
+    ${tube('M182 96L198 134', 11)}
+    <g class="bs-head">
+      <path d="M155 48C155 30 164 24 176 24C190 24 198 34 197 50C196 64 188 75 177 75C165 75 156 64 155 50Z" fill="var(--bs-paper)"/>
+      <circle cx="194" cy="55" r="4.5" fill="var(--bs-paper)"/>
+      <path d="M155 50L149 59L156 60" fill="var(--bs-paper)"/>
+      <path d="M158 50Q162.5 54 167 50M174 50Q178.5 53.5 183 50M158 43Q163 40 168 43M174 42Q179 39 184 42M161 66Q166 68.5 171 66" fill="none" stroke-width="2.4"/>
+      <circle cx="170" cy="59" r="3.2" fill="var(--accent)" fill-opacity=".35" stroke="none"/>
+      <path d="M153 46C150 22 168 13 186 18C202 24 202 44 197 54L194 40C186 32 170 32 160 44Z" fill="currentColor"/>
+      <g class="bs-hair-front">${FRONT.map((d) => dread(d, 5.5)).join('')}</g>
+    </g>
   </g>
 
   <g class="bs-server" stroke="currentColor" stroke-width="3">
@@ -73,17 +87,20 @@ export function brewScene({ cls = '', label = '' } = {}) {
     <path d="M58 112C53 105 63 101 58 93"/><path d="M72 110C67 103 77 99 72 91"/><path d="M86 112C81 105 91 101 86 93"/>
   </g>
 
-  <path class="bs-stream" d="M73 110V134" pathLength="1" stroke="currentColor" stroke-width="3" fill="none"/>
+  <path class="bs-stream" d="M69 114V138" pathLength="1" stroke="currentColor" stroke-width="3" fill="none"/>
 
   <g class="bs-kettle" stroke="currentColor" stroke-width="3">
+    ${tube('M198 134L170 110', 11)}
+    <circle cx="198" cy="134" r="5.6" fill="var(--bs-paper)" stroke="none"/>
     <path d="M102 106C90 106 90 91 80 91L72 95" fill="none" stroke-width="4"/>
     <path d="M143 82Q161 80 159 98Q158 108 146 108" fill="none"/>
     <path d="M100 98C100 84 110 78 123 78C136 78 146 84 146 98C146 108 140 113 123 113C106 113 100 108 100 98Z" fill="var(--bs-paper)"/>
     <path d="M102 90Q123 96 144 90M101 101Q123 107 145 101" fill="none" stroke-width="2.2"/>
     <path d="M113 78Q123 70 133 78" fill="var(--bs-paper)"/>
     <rect x="118" y="65" width="9" height="7" rx="2" fill="currentColor"/>
-    <path d="M148 94Q158 87 167 93Q171 101 165 107Q156 111 148 105Z" fill="var(--bs-paper)"/>
-    <path d="M154 95V103M159 94V104" fill="none" stroke-width="2"/>
+    <path d="M148 94Q158 87 168 93Q173 102 167 108Q158 112 148 105Z" fill="var(--bs-paper)"/>
+    <path d="M154 95V104M159 93.5V104.5M164 94V104" fill="none" stroke-width="2"/>
+    <path d="M168 101Q176 100 175 108" fill="none" stroke-width="2.4"/>
   </g>
 </svg>`;
 }

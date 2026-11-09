@@ -1,9 +1,30 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#9a5a28"/><stop offset="1" stop-color="#3a2012"/></linearGradient></defs>
-  <rect width="512" height="512" rx="112" fill="url(#g)"/>
-  <g fill="none" stroke="#fbeedb" stroke-width="22" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M132 232h206v66a80 80 0 0 1-80 80h-46a80 80 0 0 1-80-80z"/>
-    <path d="M338 246h22a44 44 0 0 1 0 88h-22"/>
-    <path d="M198 112c-18 22 18 34 0 62M256 96c-18 22 18 34 0 62M314 112c-18 22 18 34 0 62" stroke="#f0b36a"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" stroke-linejoin="round" stroke-linecap="round">
+  <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f3cf9a"/><stop offset="1" stop-color="#d98b3a"/></linearGradient>
+  <clipPath id="c"><rect width="512" height="512" rx="112"/></clipPath></defs>
+  <g clip-path="url(#c)"><rect width="512" height="512" fill="url(#g)"/>
+  <g transform="translate(256 210) scale(4.2) translate(-183 -50)"><g  stroke="#2a1c13" stroke-width="3">
+    <g ><g ><path d="M194 30Q212 36 214 68" stroke="#2a1c13" stroke-width="6.5" fill="none"/><path d="M194 30Q212 36 214 68" stroke="#fbeedb" stroke-opacity=".5" stroke-width="1.4" stroke-dasharray="1.2 4.6" fill="none"/></g><g ><path d="M196 38Q208 54 208 90" stroke="#2a1c13" stroke-width="6.5" fill="none"/><path d="M196 38Q208 54 208 90" stroke="#fbeedb" stroke-opacity=".5" stroke-width="1.4" stroke-dasharray="1.2 4.6" fill="none"/></g><g ><path d="M190 26Q210 22 222 46" stroke="#2a1c13" stroke-width="6.5" fill="none"/><path d="M190 26Q210 22 222 46" stroke="#fbeedb" stroke-opacity=".5" stroke-width="1.4" stroke-dasharray="1.2 4.6" fill="none"/></g><g ><path d="M198 46Q200 66 198 98" stroke="#2a1c13" stroke-width="6.5" fill="none"/><path d="M198 46Q200 66 198 98" stroke="#fbeedb" stroke-opacity=".5" stroke-width="1.4" stroke-dasharray="1.2 4.6" fill="none"/></g><g ><path d="M184 22Q200 12 216 26" stroke="#2a1c13" stroke-width="6.5" fill="none"/><path d="M184 22Q200 12 216 26" stroke="#fbeedb" stroke-opacity=".5" stroke-width="1.4" stroke-dasharray="1.2 4.6" fill="none"/></g></g>
+    <path d="M168 70V86M186 68V84" fill="none"/>
+    <path d="M166 68H202V80C205 92 198 99 184 99C170 99 163 92 166 80Z" fill="#fbeedb" stroke="none"/>
+    <!-- oversized tank top -->
+    <path d="M160 84C168 98 164 110 162 124C157 156 153 190 153 224H229C229 190 226 156 217 122C214 108 214 96 208 84C202 92 194 96 184 96C174 96 166 92 160 84Z" fill="#fbeedb"/>
+    <path d="M160 84C168 98 164 110 162 124C157 156 153 190 153 224H229C229 190 226 156 217 122C214 108 214 96 208 84C202 92 194 96 184 96C174 96 166 92 160 84Z" fill="#d98b3a" fill-opacity=".18" stroke="none"/>
+    <path d="M158 214H224M174 142Q178 170 172 198" fill="none" stroke-width="2" stroke-opacity=".35"/>
+    <!-- far arm, relaxed (in front of the tank) -->
+    
+    
+    <!-- near arm: upper part (static) -->
+    
+    <g >
+      <path d="M155 48C155 30 164 24 176 24C190 24 198 34 197 50C196 64 188 75 177 75C165 75 156 64 155 50Z" fill="#fbeedb"/>
+      <circle cx="194" cy="55" r="4.5" fill="#fbeedb"/>
+      <path d="M155 50L149 59L156 60" fill="#fbeedb"/>
+      <path d="M158 50Q162.5 54 167 50M174 50Q178.5 53.5 183 50M158 43Q163 40 168 43M174 42Q179 39 184 42M161 66Q166 68.5 171 66" fill="none" stroke-width="2.4"/>
+      <circle cx="170" cy="59" r="3.2" fill="#d98b3a" fill-opacity=".35" stroke="none"/>
+      <path d="M153 46C150 22 168 13 186 18C202 24 202 44 197 54L194 40C186 32 170 32 160 44Z" fill="#2a1c13"/>
+      <g ><g ><path d="M192 34Q199 50 195 76" stroke="#2a1c13" stroke-width="5.5" fill="none"/><path d="M192 34Q199 50 195 76" stroke="#fbeedb" stroke-opacity=".5" stroke-width="1.4" stroke-dasharray="1.2 4.6" fill="none"/></g><g ><path d="M187 29Q192 46 188 66" stroke="#2a1c13" stroke-width="5.5" fill="none"/><path d="M187 29Q192 46 188 66" stroke="#fbeedb" stroke-opacity=".5" stroke-width="1.4" stroke-dasharray="1.2 4.6" fill="none"/></g><g ><path d="M160 24Q150 20 145 30" stroke="#2a1c13" stroke-width="5.5" fill="none"/><path d="M160 24Q150 20 145 30" stroke="#fbeedb" stroke-opacity=".5" stroke-width="1.4" stroke-dasharray="1.2 4.6" fill="none"/></g></g>
+    </g>
   </g>
+
+  </g></g>
 </svg>

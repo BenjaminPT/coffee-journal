@@ -112,7 +112,7 @@ function showSplash() {
   };
   el.addEventListener('click', end);
   document.addEventListener('keydown', function k(e) { if (e.key === 'Escape' || e.key === 'Enter') { document.removeEventListener('keydown', k); end(); } });
-  setTimeout(end, RM.matches ? 900 : 3700);
+  setTimeout(end, RM.matches ? 900 : 5200);
 }
 
 function go() {

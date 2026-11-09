@@ -361,8 +361,8 @@ input[type="datetime-local"].input, input[type="date"].input { min-width: 0; }
 }
 
 /* ───────── Brew scene (kettle → V60 → server) ───────── */
-.bs { width: 100%; height: auto; overflow: visible; color: var(--ink); --bs-t: 4s; --bs-paper: var(--bg); }
-.bs .bs-kettle { transform-box: view-box; transform-origin: 154px 98px; }
+.bs { width: 100%; height: auto; overflow: visible; color: var(--ink); --bs-t: 6.4s; --bs-paper: var(--bg); }
+.bs .bs-kettle { transform-box: view-box; transform-origin: 198px 134px; }
 .bs .bs-stream { stroke-dasharray: 1 1; stroke-dashoffset: 1; }
 .bs .bs-bed { transform-box: view-box; transform-origin: 70px 164px; }
 .bs .bs-drops, .bs .bs-steam { opacity: 0; }
@@ -375,44 +375,51 @@ input[type="datetime-local"].input, input[type="date"].input { min-width: 0; }
 .bs.play .bs-steam { animation: bs-steam var(--bs-t) ease-out infinite; }
 .bs .bs-drop { transform-box: view-box; }
 .bs .bs-dread { transform-box: view-box; }
-.bs.play .bs-dread { animation: bs-sway 3.2s ease-in-out infinite alternate; }
-@keyframes bs-sway { from { transform: rotate(-3.5deg); } to { transform: rotate(3.5deg); } }
-.bs.play .bs-drop { animation: bs-drop .72s cubic-bezier(.5, 0, 1, .6) infinite; }
-.bs.play .bs-drop.d2 { animation-delay: .24s; }
-.bs.play .bs-drop.d3 { animation-delay: .48s; }
+.bs.play .bs-dread { animation: bs-sway 3.8s ease-in-out infinite alternate; }
+@keyframes bs-sway { from { transform: rotate(-2.6deg); } to { transform: rotate(2.6deg); } }
+.bs .bs-head { transform-box: view-box; transform-origin: 177px 76px; }
+.bs.play .bs-head { animation: bs-head var(--bs-t) ease-in-out infinite; }
+.bs.play .bs-drop { animation: bs-drop .8s cubic-bezier(.5, 0, 1, .6) infinite; }
+.bs.play .bs-drop.d2 { animation-delay: .27s; }
+.bs.play .bs-drop.d3 { animation-delay: .54s; }
 @keyframes bs-kettle {
-  0% { transform: translate(46px, 8px) rotate(0); opacity: 0; }
-  13% { transform: translate(0, 0) rotate(0); opacity: 1; }
-  21% { transform: translate(0, 0) rotate(0); }
-  31% { transform: translate(0, 0) rotate(-10deg); }
-  76% { transform: translate(0, 0) rotate(-10deg); }
-  86% { transform: translate(0, 0) rotate(0); opacity: 1; }
-  95%, 100% { transform: translate(46px, 8px) rotate(0); opacity: 0; }
+  0% { transform: translate(40px, 10px) rotate(4deg); opacity: 0; animation-timing-function: cubic-bezier(.22, 1, .36, 1); }
+  14% { transform: translate(0, 0) rotate(0); opacity: 1; }
+  24% { transform: translate(0, -1px) rotate(0); animation-timing-function: cubic-bezier(.45, 0, .2, 1); }
+  38% { transform: translate(0, 0) rotate(-8deg); }
+  76% { transform: translate(0, 0) rotate(-8.6deg); animation-timing-function: cubic-bezier(.5, 0, .3, 1); }
+  88% { transform: translate(0, 0) rotate(0); opacity: 1; animation-timing-function: cubic-bezier(.5, 0, .75, 0); }
+  97%, 100% { transform: translate(40px, 10px) rotate(4deg); opacity: 0; }
+}
+@keyframes bs-head {
+  0%, 24% { transform: rotate(0) translateY(0); }
+  40%, 76% { transform: rotate(2deg) translateY(1.5px); }
+  90%, 100% { transform: rotate(0) translateY(0); }
 }
 @keyframes bs-stream {
-  0%, 29% { stroke-dashoffset: 1; }
-  35% { stroke-dashoffset: 0; }
-  76% { stroke-dashoffset: 0; }
+  0%, 35% { stroke-dashoffset: 1; animation-timing-function: cubic-bezier(.3, 0, .2, 1); }
+  41% { stroke-dashoffset: 0; }
+  76% { stroke-dashoffset: 0; animation-timing-function: cubic-bezier(.5, 0, .8, .4); }
   82%, 100% { stroke-dashoffset: -1; }
 }
 @keyframes bs-bed {
-  0%, 34% { transform: scaleY(.62); }
-  47% { transform: scaleY(1.12); }
-  58% { transform: scaleY(1); }
-  84%, 100% { transform: scaleY(.8); }
+  0%, 38% { transform: scaleY(.6); animation-timing-function: cubic-bezier(.2, .8, .3, 1); }
+  52% { transform: scaleY(1.1); animation-timing-function: ease-in-out; }
+  62% { transform: scaleY(1); }
+  86%, 100% { transform: scaleY(.78); }
 }
 @keyframes bs-fill {
-  0%, 38% { transform: translateY(40px); }
-  90%, 100% { transform: translateY(0); }
+  0%, 42% { transform: translateY(40px); animation-timing-function: cubic-bezier(.35, .1, .3, 1); }
+  92%, 100% { transform: translateY(0); }
 }
-@keyframes bs-drops { 0%, 38% { opacity: 0; } 43%, 86% { opacity: 1; } 92%, 100% { opacity: 0; } }
+@keyframes bs-drops { 0%, 44% { opacity: 0; } 50%, 88% { opacity: 1; } 94%, 100% { opacity: 0; } }
 @keyframes bs-drop { 0% { transform: translateY(0); opacity: 1; } 85% { transform: translateY(26px); opacity: 1; } 100% { transform: translateY(30px); opacity: 0; } }
-@keyframes bs-steam { 0%, 80% { opacity: 0; transform: translateY(6px); } 92% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(-6px); } }
+@keyframes bs-steam { 0%, 84% { opacity: 0; transform: translateY(6px); } 93% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(-8px); } }
 @media (prefers-reduced-motion: reduce) { .bs.play * { animation: none !important; } }
 
 /* splash */
 #splash { position: fixed; inset: 0; z-index: 2000; background: var(--bg); display: grid; place-content: center; justify-items: center; gap: 8px; padding: 24px; cursor: pointer; }
-#splash .bs { width: min(64vw, 280px); }
+#splash .bs { width: min(70vw, 300px); --bs-t: 5s; }
 #splash h1 { font: 750 30px/1.1 var(--font-display); letter-spacing: -.02em; margin-top: 4px; }
 #splash p { color: var(--ink-2); font-size: 15px; }
 #splash .skip-hint { position: absolute; bottom: calc(24px + env(safe-area-inset-bottom)); font-size: 13px; color: var(--ink-2); opacity: .7; }
