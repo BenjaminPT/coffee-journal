@@ -69,6 +69,17 @@ const D = {
 
 
 Object.assign(D, {
+  inst_title: ['Установите на экран телефона', 'Add to your home screen'],
+  inst_lead: ['Так Coffee Junior откроется как обычное приложение: на весь экран и без интернета.', 'Coffee Junior will open like a regular app: full screen and offline.'],
+  inst_ios_1: ['Откройте сайт в Safari и нажмите «Поделиться» внизу экрана', 'Open the site in Safari and tap Share at the bottom'],
+  inst_ios_2: ['Выберите «На экран “Домой”» (пролистайте список вниз)', 'Choose “Add to Home Screen” (scroll the list)'],
+  inst_ios_3: ['Нажмите «Добавить», иконка появится на экране', 'Tap Add, the icon appears on your home screen'],
+  inst_and_1: ['Откройте сайт в Chrome и нажмите меню ⋮ вверху справа', 'Open the site in Chrome and tap the ⋮ menu at the top right'],
+  inst_and_2: ['Выберите «Установить приложение» или «Добавить на главный экран»', 'Choose “Install app” or “Add to Home screen”'],
+  inst_and_3: ['Подтвердите, иконка появится на экране', 'Confirm, the icon appears on your home screen'],
+  inst_other: ['В меню браузера выберите «Установить» или «Добавить на главный экран».', 'In the browser menu choose “Install” or “Add to Home screen”.'],
+  inst_btn: ['Установить сейчас', 'Install now'], inst_ok: ['Понятно', 'Got it'], inst_menu: ['Как установить на экран', 'How to install'],
+  inst_safari: ['На iPhone установка работает только из Safari.', 'On iPhone, installing only works from Safari.'],
   theme_black: ['Чёрная', 'Black'],
   prof_title: ['Профиль', 'Profile'], prof_name: ['Ваше имя', 'Your name'], prof_name_ph: ['Например, Алекс', 'e.g. Alex'], prof_default: ['Любитель кофе', 'Coffee lover'],
   prof_qr: ['QR-профиль', 'Profile QR'], prof_note: ['QR содержит имя и статистику на момент создания. Друг увидит снимок, живой связи нет.', 'The QR holds your name and a stats snapshot taken now. Your friend sees a snapshot, there is no live link.'],

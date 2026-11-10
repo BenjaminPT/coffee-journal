@@ -8,6 +8,7 @@ import { ui, viewBrews, viewProducts, viewProduct, viewBrew, viewGear, viewMore,
 import { productForm, brewForm, equipForm, methodForm, compareSheet, profileForm } from './forms.js';
 import { openQR, openScanner, recipeUrl, profileUrl, parseShared, deliver, presetFromRecipe } from './share.js';
 import { brewScene } from './brewscene.js';
+import { maybeShowInstallGuide, showInstallGuide } from './install.js';
 import { exportJSON, exportCSV, printJournal } from './export.js';
 
 load();
@@ -194,6 +195,7 @@ const A = {
     const b = get('brew', el.dataset.id);
     brewForm({ preset: presetFromRecipe({ m: b.method, d: b.dose, w: b.water, t: b.temp, g: b.grind, f: b.flavors, c: b.coffee || (b.productName ? { n: b.productName } : null), e: b.gear }) });
   },
+  'install-guide'() { showInstallGuide(); },
   'clear-demo'() { clearDemo(); toast(t('demo_cleared')); },
   'del-method'(el) { const rec = remove('method', el.dataset.id); toast(t('deleted'), { action: t('undo'), onAction: () => restore('method', rec) }); },
   filter(el) { ui.filter = el.dataset.f; refresh(); },
@@ -245,12 +247,14 @@ $('#importFile').addEventListener('change', async (e) => {
 window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); installEvt = e; if (route.name === 'more') refresh(); });
 matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change', applyTheme);
 document.title = t('app');
+const openedViaLink = !!parseShared(location.hash);
 checkShared();
 route = parse();
 lastDepth = depth(route);
 buildTabbar();
 render();
 showSplash();
+if (!openedViaLink) whenReady(() => setTimeout(maybeShowInstallGuide, 900));
 
 if ('serviceWorker' in navigator && location.protocol !== 'file:') {
   navigator.serviceWorker.register('sw.js').catch(() => {});

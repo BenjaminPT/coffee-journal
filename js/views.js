@@ -1,3 +1,4 @@
+import { isInstalled } from './install.js';
 import { esc, fmt, mmss, hash, round } from './util.js';
 import { ic, starsHtml } from './icons.js';
 import { t, getLang, ROASTS, ROAST_COLORS, EQ_TYPES } from './i18n.js';
@@ -281,6 +282,7 @@ export function viewMore(installable) {
     <button type="button" data-act="exp-csv">${ic('download')}<span class="grow">${esc(t('exp_csv'))}</span>${ic('next', 18)}</button>
     <button type="button" data-act="exp-json">${ic('download')}<span class="grow">${esc(t('exp_json'))}</span>${ic('next', 18)}</button>
     ${hasDemo ? `<button type="button" data-act="clear-demo">${ic('trash')}<span class="grow">${esc(t('demo_clear'))}</span>${ic('next', 18)}</button>` : ''}
+    ${isInstalled() ? '' : `<button type="button" data-act="install-guide">${ic('download')}<span class="grow">${esc(t('inst_menu'))}</span>${ic('next', 18)}</button>`}
     <button type="button" data-act="imp-json">${ic('upload')}<span class="grow">${esc(t('imp_json'))}</span>${ic('next', 18)}</button>
   </div>
   <p class="hint" style="margin-top:8px">${esc(t('data_note'))}</p>
